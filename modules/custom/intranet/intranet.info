@@ -1,0 +1,4 @@
+name = FoA Intranet
+description = Custom code for the Faculty of Arts staff intranet website.
+core = 7.x
+package = University of Melbourne

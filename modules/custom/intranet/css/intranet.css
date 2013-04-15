@@ -1,0 +1,18 @@
+/* No border on the shoutbox form. */
+#shoutbox-add-form form fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+#shoutbox-body table tbody tr.odd,
+#shoutbox-body table tbody tr.even,
+#shoutbox-body table tbody tr:nth-child(2n+1),
+#shoutbox-body table tbody tr:nth-child(2n) {
+  background: transparent;
+}
+
+/* Shoutbox content spacing. */
+#shoutbox-body table td {
+  padding: 0;
+}

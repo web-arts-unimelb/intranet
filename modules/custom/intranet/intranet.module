@@ -1,0 +1,26 @@
+<?php
+/**
+ * @file
+ */
+
+/**
+ * Implements hook_init().
+ */
+function intranet_init() {
+  drupal_add_css(drupal_get_path('module', 'intranet') . '/css/intranet.css');
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function intranet_form_alter(&$form, $form_state, $form_id) {
+  // The shoutbox form.
+  if ($form_id == 'shoutbox_add_form') {
+    $form['wrapper']['submit']['#value'] = t('Submit');
+  }
+
+  // The exposed search view form.
+  if ($form_id == 'views_exposed_form' && !empty($form['#info']['filter-field_shared_type_of_information'])) {
+    $form['field_shared_type_of_information']['#type'] = 'checkboxes';
+  }
+}
