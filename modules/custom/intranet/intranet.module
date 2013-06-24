@@ -11,6 +11,19 @@ function intranet_init() {
 }
 
 /**
+ * Implements hook_menu.
+ */
+function intranet_menu() {
+  $items['wordpress'] = array(
+    'title' => t('Wordpress Menu mapper'),
+    'page callback' => 'intranet_wordpress_mapper',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+/**
  * Implements hook_form_alter().
  */
 function intranet_form_alter(&$form, $form_state, $form_id) {
@@ -23,4 +36,27 @@ function intranet_form_alter(&$form, $form_state, $form_id) {
   if ($form_id == 'views_exposed_form' && !empty($form['#info']['filter-field_shared_type_of_information'])) {
     $form['field_shared_type_of_information']['#type'] = 'checkboxes';
   }
+}
+
+/**
+ * Helper that redirects wordpress menu limnks to Drupal pages.
+ */
+function intranet_wordpress_mapper() {
+  $post_id = intval($_REQUEST['page_id']);
+
+  // No post id? Bail!
+  if (empty($post_id)) {
+    return drupal_not_found();
+  }
+
+  // Load the current Drupal node ID for this WP post_id.
+  $nid = db_select('migrate_map_staffintranetpage', 'm')->fields('m', array('destid1'))->condition('sourceid1', $post_id)->execute->fetchField();
+
+  // Not found? Pwaaarp.
+  if (empty($nid)) {
+    return drupal_not_found();
+  }
+
+  // Go look at the node.
+  drupal_goto('node/' . $nid);
 }
