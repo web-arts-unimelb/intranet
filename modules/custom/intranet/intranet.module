@@ -26,7 +26,7 @@ function intranet_menu() {
 /**
  * Implements hook_form_alter().
  */
-function intranet_form_alter(&$form, $form_state, $form_id) {
+function intranet_form_alter(&$form, &$form_state, $form_id) {
   // The shoutbox form.
   if ($form_id == 'shoutbox_add_form') {
     $form['wrapper']['submit']['#value'] = t('Submit');
@@ -54,10 +54,14 @@ function intranet_form_alter(&$form, $form_state, $form_id) {
       }
     }
   }
+  else if ($form_id == 'views_exposed_form' && $form_state['view']->name == 'search_content') {
+    $form['search_api_views_fulltext']['#default_value'] = filter_xss($_REQUEST['search_api_views_fulltext']);
+  }
+
+
 }
 
 /**
-<<<<<<< HEAD
  * Implements hook_views_pre_render().
  */
 function intranet_views_pre_render(&$view) {
