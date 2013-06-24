@@ -44,9 +44,22 @@ function intranet_form_alter(&$form, $form_state, $form_id) {
 function intranet_wordpress_mapper() {
   $post_id = intval($_REQUEST['page_id']);
 
-  // No post id? Bail!
+  // No post id? Check the path aliases....
   if (empty($post_id)) {
-    return drupal_not_found();
+
+    // Is this an actual path alias? Remove 'wordpress' from the
+    // start of the array.
+    $path = arg();
+    @array_shift($path);
+
+    // If there is anything left, that should be our new alias.
+    if (count($path)) {
+      drupal_goto(implode('/', $path));
+    }
+    else {
+      // Nothing. Spit out a 404.
+      return drupal_not_found();
+    }
   }
 
   // Load the current Drupal node ID for this WP post_id.
