@@ -182,7 +182,7 @@ function intranet_wordpress_mapper() {
   }
 
   // Load the current Drupal node ID for this WP post_id.
-  $nid = db_select('migrate_map_staffintranetpage', 'm')->fields('m', array('destid1'))->condition('sourceid1', $post_id)->execute->fetchField();
+  $nid = db_select('migrate_map_staffintranetpage', 'm')->fields('m', array('destid1'))->condition('sourceid1', $post_id)->execute()->fetchField();
 
   // Not found? Pwaaarp.
   if (empty($nid)) {
