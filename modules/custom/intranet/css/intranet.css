@@ -16,3 +16,30 @@
 #shoutbox-body table td {
   padding: 0;
 }
+
+#edit-field-shared-type-of-information-wrapper,
+#edit-field-shared-portfolio-wrapper,
+#edit-field-shared-staff-services-wrapper,
+#edit-field-shared-unit-or-school-wrapper,
+.views-exposed-widget.views-submit-button {
+  clear: both;
+  margin-left: 250px;
+}
+
+#edit-field-shared-type-of-information-wrapper {
+  margin-top: -60px;
+}
+
+.field-name-body {
+  margin-bottom: 2em;
+}
+
+.field-type-taxonomy-term-reference,
+.field-type-taxonomy-term-reference .field-items,
+.field-type-taxonomy-term-reference .field-items .field-item {
+  color: #999;
+  display: inline;
+  float: left;
+  font-style: italic;
+  margin-right: 0.5em;
+}

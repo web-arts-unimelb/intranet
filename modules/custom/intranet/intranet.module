@@ -19,8 +19,126 @@ function intranet_form_alter(&$form, $form_state, $form_id) {
     $form['wrapper']['submit']['#value'] = t('Submit');
   }
 
-  // The exposed search view form.
-  if ($form_id == 'views_exposed_form' && !empty($form['#info']['filter-field_shared_type_of_information'])) {
-    $form['field_shared_type_of_information']['#type'] = 'checkboxes';
+  if ($form_id == 'views_exposed_form' && isset($form['search_api_views_fulltext']) && FALSE) {
+    $taxonomies = array('field_shared_type_of_information', 'field_shared_portfolio', 'field_shared_staff_services', 'field_shared_unit_or_school');
+
+    $form['search_api_views_fulltext'] ['#weight'] = -1;
+    $form['taxonomy'] = array(
+      '#type' => 'fieldset',
+      '#collapsible' => FALSE,
+      '#weight' => 0,
+      '#id' => 'search-view-taxonomy',
+      '#attributes' => array('style' => 'clear: both;'),
+    );
+
+    // Wrap the taxonomy filters in a fieldset.
+    foreach ($taxonomies as $taxonomy) {
+      if (isset($form['#info']['filter-' . $taxonomy])) {
+        $form['taxonomy'][$taxonomy] = $form[$taxonomy];
+        $form['taxonomy'][$taxonomy]['#title'] = $form['#info']['filter-' . $taxonomy]['label'];
+        unset($form[$taxonomy]);
+        unset($form['#info']['filter-' . $taxonomy]['label']);
+      }
+    }
   }
+}
+
+/**
+ * Implements hook_views_pre_render().
+ */
+function intranet_views_pre_render(&$view) {
+  // Default to the 5 most popular items on the search form if no
+  // keywords were entered.
+  $displays = array('page_1', 'page_2');
+  if ($view->name == 'search_content' && ($view->current_display == 'page_1' || $view->current_display == 'page_2') && empty($view->exposed_input)) {
+    $view->attachment_after = _intranet_popular_content($view->args);
+  }
+}
+
+/**
+ * Helper that executes the popular content view and returns its results.
+ */
+function _intranet_popular_content($portfolio = NULL) {
+  $view = views_get_view('popular_content');
+  if (is_object($view)) {
+    $view->set_display('block_1');
+  }
+
+  if (is_array($portfolio)) {
+    $view->set_arguments($portfolio);
+  }
+
+  $view->pre_execute();
+  $view->execute();
+
+  return $view->render();
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function intranet_block_info() {
+  return array(
+    'intranet_searchapi_form' => array(
+      'info' => t('SearchAPI DB Form Block')
+    )
+  );
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function intranet_block_view($delta) {
+  return array(
+    'subject' => t('SearchAPI Search'),
+    'content' => drupal_get_form('intranet_searchapi_form'),
+  );
+}
+
+/**
+ * Helper to return a search form for SearchAPI.
+ */
+function intranet_searchapi_form() {
+  $form['#action'] = 'search';
+  $form['#method'] = 'GET';
+  $form['#attributes'] = array('id' => array('searchapi-form'), 'class' => array('search-form'));
+
+  $form['basic'] = array(
+    '#type' => 'container',
+    '#attributes' => array('class' => array('container-inline')),
+  );
+
+  $form['basic']['search_api_views_fulltext'] = array(
+    '#type' => 'textfield',
+    '#size' => 15,
+    '#maxlength' => 128,
+    '#attributes' => array(
+      'title' => t('Enter the terms you wish to search for.'),
+      'placeholder' => t('Search'),
+    ),
+  );
+
+  $form['basic']['field_shared_type_of_information'] = array(
+    '#type' => 'hidden',
+    '#value' => 'All'
+  );
+  $form['basic']['field_shared_portfolio'] = array(
+    '#type' => 'hidden',
+    '#value' => 'All',
+  );
+  $form['basic']['field_shared_staff_services'] = array(
+    '#type' => 'hidden',
+    '#value' => 'All',
+  );
+  $form['basic']['field_shared_unit_or_school'] = array(
+    '#type' => 'hidden',
+    '#value' => 'All',
+  );
+
+  $form['basic']['submit'] = array(
+    '#type' => 'submit',
+    '#value' =>  t('Search'),
+  );
+
+  return $form;
 }
