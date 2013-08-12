@@ -43,3 +43,13 @@
   font-style: italic;
   margin-right: 0.5em;
 }
+
+/* Fixup display of staff search. */
+#views-exposed-form-university-staff-page .views-exposed-widget.views-submit-button {
+  clear: none;
+  margin-left: 0;
+}
+
+#views-exposed-form-university-staff-page .views-exposed-widget .form-item-attribute-name {
+  display: none;
+}
