@@ -196,3 +196,45 @@ function intranet_wordpress_mapper() {
   // Go look at the node.
   drupal_goto('node/' . $nid);
 }
+
+// hook_node_access
+// Several pages are accessible by site-admin only
+function intranet_node_access($node, $op, $account) {
+	$accepted_role = "site-admin";
+
+	$node_list = array(
+		'1657',
+		'1654',
+		'1655',
+		'1660',
+		
+		'1653',
+		'1652',
+		'1895',
+		'1869',
+
+		'1659',
+		'1874',
+		'1878',
+		'1879',
+
+		'1877',
+		'1876',
+		'1656',
+		'1875'
+	);
+
+	if($op == 'update') {
+		if(isset($account->roles)) {
+			if(is_array($account->roles)) {
+				if(!in_array($accepted_role, $account->roles)) {
+					if(isset($node->nid)) {
+      			if(in_array($node->nid, $node_list)) {
+							return NODE_ACCESS_DENY;
+      			}
+    			}
+				}	
+			}
+		}
+	}
+}
