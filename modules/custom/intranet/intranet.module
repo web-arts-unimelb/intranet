@@ -66,11 +66,14 @@ function intranet_form_alter(&$form, &$form_state, $form_id) {
  */
 function intranet_preprocess_status_messages(&$vars) {
   $messages = drupal_get_messages('error');
-  foreach ($messages['error'] as $error) {
-    if ($error == t('Access denied. You may need to login below or register to access this page.')) {
-      continue;
+  if (!empty($messages['error'])) {
+    $errors = $messages['error'];
+    foreach ($errors as $error) {
+      if ($error == t('Access denied. You may need to login below or register to access this page.')) {
+        continue;
+      }
+      drupal_set_message($error, 'error');
     }
-    drupal_set_message($error, 'error');
   }
 }
 
