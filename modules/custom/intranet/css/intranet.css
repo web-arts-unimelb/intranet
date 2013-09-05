@@ -5,6 +5,11 @@
   border: none;
 }
 
+
+#shoutbox-add-form fieldset {
+	background-color: #E9EEF3;
+}
+
 #shoutbox-body table tbody tr.odd,
 #shoutbox-body table tbody tr.even,
 #shoutbox-body table tbody tr:nth-child(2n+1),
