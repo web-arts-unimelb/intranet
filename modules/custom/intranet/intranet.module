@@ -33,7 +33,9 @@ function intranet_form_alter(&$form, &$form_state, $form_id) {
   }
 
   if ($form_id == 'views_exposed_form' && isset($form['search_api_views_fulltext']) && FALSE) {
-    $taxonomies = array('field_shared_type_of_information', 'field_shared_portfolio', 'field_shared_staff_services', 'field_shared_unit_or_school');
+    //$taxonomies = array('field_shared_type_of_information', 'field_shared_portfolio', 'field_shared_staff_services', 'field_shared_unit_or_school');
+		// field_shared_unit_or_school removed requested by Sarah
+		$taxonomies = array('field_shared_type_of_information', 'field_shared_portfolio', 'field_shared_staff_services');
 
     $form['search_api_views_fulltext'] ['#weight'] = -1;
     $form['taxonomy'] = array(
@@ -133,7 +135,7 @@ function intranet_block_view($delta) {
  * Helper to return a search form for SearchAPI.
  */
 function intranet_searchapi_form() {
-  $form['#action'] = 'search';
+  $form['#action'] = '/search';
   $form['#method'] = 'GET';
   $form['#attributes'] = array('id' => array('searchapi-form'), 'class' => array('search-form'));
 
@@ -144,7 +146,7 @@ function intranet_searchapi_form() {
 
   $form['basic']['search_api_views_fulltext'] = array(
     '#type' => 'textfield',
-    '#size' => 15,
+    '#size' => 12,
     '#maxlength' => 128,
     '#attributes' => array(
       'title' => t('Enter the terms you wish to search for.'),
@@ -164,18 +166,39 @@ function intranet_searchapi_form() {
     '#type' => 'hidden',
     '#value' => 'All',
   );
+
+	/*
+	Removed requested by Sarah
   $form['basic']['field_shared_unit_or_school'] = array(
     '#type' => 'hidden',
     '#value' => 'All',
   );
+	*/
 
   $form['basic']['submit'] = array(
     '#type' => 'submit',
-    '#value' =>  t('Search'),
+    '#value' =>  t('Go'),
+		'#name' => '',
   );
+
+	
+	// Searchbox in dropdown menu and search box on the page yeild different results
+  // Workaround: https://drupal.org/node/821932#comment-6017528
+	// Does it has negative effect?
+	$form['#after_build'][] = '_intranet_form_modify';
 
   return $form;
 }
+
+
+function _intranet_form_modify($form){
+	unset($form['form_token']);
+  unset($form['form_build_id']);
+  unset($form['form_id']);
+
+  return $form;
+}
+
 
 /*
  * Helper that redirects wordpress menu links to Drupal pages.
