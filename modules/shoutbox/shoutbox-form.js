@@ -13,7 +13,7 @@ Drupal.behaviors.shoutbox = {
 	// Detect the shout form
 	var shoutForm = $('#shoutbox-add-form:not(.shoutbox-processed)');
 	
-	if (shoutForm.length) {
+	if (shoutForm) {
 	    // Set a class to the form indicating that it's been processed
 	    $(shoutForm).addClass('shoutbox-processed');
 	    
@@ -143,10 +143,11 @@ Drupal.shoutbox.loadShouts = function(restoreForm) {
       });
       
       // Restore the button
-      if (restoreForm) {
+      // if (restoreForm) {
+console.log ('Rly');
         $('#shoutbox-add-form input#edit-submit').show();
         $('#shoutbox-throbber').hide();
-      }
+      // }
     },
     error: function() {
       $('#shoutbox-error').html(Drupal.t('Error updating shouts. Please refresh the page.'));
@@ -188,8 +189,8 @@ Drupal.shoutbox.validate = function (formData, jqForm, options) {
   
   // Clear the form input 
   $('#shoutbox-add-form').resetForm();
-  $('#shoutbox-throbber').show();
-  $('#shoutbox-add-form input#edit-submit').hide();
+  // $('#shoutbox-throbber').show();
+  // $('#shoutbox-add-form input#edit-submit').hide();
   return true;	
 };
 
