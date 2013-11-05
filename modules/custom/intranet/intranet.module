@@ -34,8 +34,8 @@ function intranet_form_alter(&$form, &$form_state, $form_id) {
 
   if ($form_id == 'views_exposed_form' && isset($form['search_api_views_fulltext']) && FALSE) {
     //$taxonomies = array('field_shared_type_of_information', 'field_shared_portfolio', 'field_shared_staff_services', 'field_shared_unit_or_school');
-		// field_shared_unit_or_school removed requested by Sarah
-		$taxonomies = array('field_shared_type_of_information', 'field_shared_portfolio', 'field_shared_staff_services');
+    // field_shared_unit_or_school removed requested by Sarah
+    $taxonomies = array('field_shared_type_of_information', 'field_shared_portfolio', 'field_shared_staff_services');
 
     $form['search_api_views_fulltext'] ['#weight'] = -1;
     $form['taxonomy'] = array(
@@ -167,32 +167,32 @@ function intranet_searchapi_form() {
     '#value' => 'All',
   );
 
-	/*
-	Removed requested by Sarah
+  /*
+  Removed requested by Sarah
   $form['basic']['field_shared_unit_or_school'] = array(
     '#type' => 'hidden',
     '#value' => 'All',
   );
-	*/
+  */
 
   $form['basic']['submit'] = array(
     '#type' => 'submit',
     '#value' =>  t('Go'),
-		'#name' => '',
+    '#name' => '',
   );
 
-	
-	// Searchbox in dropdown menu and search box on the page yeild different results
+  
+  // Searchbox in dropdown menu and search box on the page yeild different results
   // Workaround: https://drupal.org/node/821932#comment-6017528
-	// Does it has negative effect?
-	$form['#after_build'][] = '_intranet_form_modify';
+  // Does it has negative effect?
+  $form['#after_build'][] = '_intranet_form_modify';
 
   return $form;
 }
 
 
 function _intranet_form_modify($form){
-	unset($form['form_token']);
+  unset($form['form_token']);
   unset($form['form_build_id']);
   unset($form['form_id']);
 
@@ -236,44 +236,42 @@ function intranet_wordpress_mapper() {
   drupal_goto('node/' . $nid);
 }
 
-// hook_node_access
-// Several pages are accessible by site-admin only
+/**
+ * Implements hook_node_access().
+ */
 function intranet_node_access($node, $op, $account) {
-	$accepted_role = "site-admin";
+  // Anyone can access the 'i want access' webform.
+  if ($op == 'view' && !empty($node->nid) && $node->nid == 1936) {
+    return NODE_ACCESS_ALLOW;
+  }
 
-	$node_list = array(
-		'1657',
-		'1654',
-		'1655',
-		'1660',
-		
-		'1653',
-		'1652',
-		'1895',
-		'1869',
+  // Several pages should be accessible by site-admins only.
+  $site_admin_node_list = array(
+    '1657',
+    '1654',
+    '1655',
+    '1660',
 
-		'1659',
-		'1874',
-		'1878',
-		'1879',
+    '1653',
+    '1652',
+    '1895',
+    '1869',
 
-		'1877',
-		'1876',
-		'1656',
-		'1875'
-	);
+    '1659',
+    '1874',
+    '1878',
+    '1879',
 
-	if($op == 'update') {
-		if(isset($account->roles)) {
-			if(is_array($account->roles)) {
-				if(!in_array($accepted_role, $account->roles)) {
-					if(isset($node->nid)) {
-      			if(in_array($node->nid, $node_list)) {
-							return NODE_ACCESS_DENY;
-      			}
-    			}
-				}	
-			}
-		}
-	}
+    '1877',
+    '1876',
+    '1656',
+    '1875'
+  );
+
+  // If updating a node in the list and anon or not a site-admin, reject access.
+  if ($op == 'update' && !empty($node->nid) &&  in_array($node->nid, $site_admin_node_list)) {
+    if (empty($account->roles) || !in_array($accepted_role, $account->roles)) {
+      return NODE_ACCESS_DENY;
+    }
+  }
 }
