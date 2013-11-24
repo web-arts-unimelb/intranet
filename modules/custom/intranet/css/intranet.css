@@ -22,6 +22,20 @@
   padding: 0;
 }
 
+#shoutbox-body .shoutbox-shout p {
+  display: block;
+
+  -ms-word-break: break-all;
+  word-break: break-all;
+
+  /* Non standard for webkit */
+  word-break: break-word;
+
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  hyphens: auto;
+}
+
 #edit-field-shared-type-of-information-wrapper,
 #edit-field-shared-portfolio-wrapper,
 #edit-field-shared-staff-services-wrapper,
