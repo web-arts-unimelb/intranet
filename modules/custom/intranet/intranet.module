@@ -32,7 +32,12 @@ function intranet_form_alter(&$form, &$form_state, $form_id) {
     $form['wrapper']['submit']['#value'] = t('Submit');
   }
 
-  if ($form_id == 'views_exposed_form' && isset($form['search_api_views_fulltext']) && FALSE) {
+	if ($form_id == 'user_login') {
+		// Ldap checking will be executed first, then the following submit handler
+		// If authentication is successfully, the submit handler will be called. Otherwise, it will not be called.
+		array_unshift($form['#submit'], '_intranet_login_submit');	
+	}
+  else if ($form_id == 'views_exposed_form' && isset($form['search_api_views_fulltext']) && FALSE) {
     //$taxonomies = array('field_shared_type_of_information', 'field_shared_portfolio', 'field_shared_staff_services', 'field_shared_unit_or_school');
     // field_shared_unit_or_school removed requested by Sarah
     $taxonomies = array('field_shared_type_of_information', 'field_shared_portfolio', 'field_shared_staff_services');
@@ -274,4 +279,175 @@ function intranet_node_access($node, $op, $account) {
       return NODE_ACCESS_DENY;
     }
   }
+}
+
+/*
+	Custom login submit. User is already successfully authenticated.
+*/
+function _intranet_login_submit($form, &$form_state) {
+	global $user;
+	
+	if(_intranet_is_login_via_ldap($user)) {
+		if(in_array('unimelb staff', $user->roles) || in_array('arts staff', $user->roles)) {
+			// Role is already assigned, so continue.
+			
+		}
+		else {
+			$username = $form_state['complete form']['name']['#value'];
+			$password = $form_state['complete form']['pass']['#value'];
+
+			$department_nums = _intranet_get_department_nums($username);
+			$allowed_department_nums = _intranet_allowed_department_nums();
+			$inter_array = array_intersect($department_nums, $allowed_department_nums);
+			if(count($inter_array) >= 1) {
+				// Assign role: 'arts staff'
+				$role_id = _intranet_get_role_id_by_name('arts staff');
+				_intranet_create_users_roles_entry($user->uid, $role_id);
+			} else {
+				// Assign role: 'unimelb staff'
+				$role_id = _intranet_get_role_id_by_name('unimelb staff');
+        _intranet_create_users_roles_entry($user->uid, $role_id);					
+			}
+		}
+	}
+	else {
+		// Login via internal Drupal account
+	}
+}
+
+function _intranet_is_login_via_ldap($account) {
+  $condi = false;
+  if( isset($account->data['ldap_authentication']['init']['dn']) ) {
+    if( !empty($account->data['ldap_authentication']['init']['dn']) ) {
+      $condi = true;
+    }
+  }
+
+  return $condi;
+}
+
+function _intranet_get_department_nums($username) {
+	global $conf;
+	$return_department_num_array = array();
+
+	if(isset($conf['my_ldap_master_config']['username'])) {
+		$ldap_master_username = $conf['my_ldap_master_config']['username'];
+  	$ldap_master_password = $conf['my_ldap_master_config']['password'];
+	}
+	else {
+		drupal_set_message(t('Ldap fails to bind. Please check master_ldap_username & master_ldap_username are in settings.php'));
+	}
+
+  $ldap_url = 'ldaps://ad1.unimelb.edu.au';
+  $ldap_port = 636;
+
+	$ldap_conn = ldap_connect($ldap_url, $ldap_port) or die("Could not connect to LDAP server.");
+  ldap_set_option($ldap_conn, LDAP_OPT_REFERRALS, 0);
+  ldap_set_option($ldap_conn, LDAP_OPT_PROTOCOL_VERSION, 3);
+
+  // Bind
+  $ldap_dn_account = "cn=$ldap_master_username,ou=Local Accounts,ou=100,ou=Business Units,dc=unimelb,dc=edu,dc=au";
+  $ldap_dn_search = "dc=unimelb,dc=edu,dc=au";
+
+	if($ldap_conn) {
+  	try {
+    	$ldap_bind = ldap_bind($ldap_conn, $ldap_dn_account, $ldap_master_password);
+    }
+    catch(Exception $e) {
+    	print_r($e);
+    	drupal_set_message(t('ldap_bind exception'), 'error');  
+  	}
+	}
+
+	if($ldap_bind) {
+  	try {
+    	$filter = "(cn=$username)";
+      $ldap_search_res = ldap_search($ldap_conn, $ldap_dn_search, $filter);
+      $info = ldap_get_entries($ldap_conn, $ldap_search_res);
+                                        
+      if(isset($info['count'])) {
+      	if($info['count'] >= 1) {
+					if($info[0]['uomdepartmentnumbers']['count'] >= 1) {
+						$index = 0;
+						while(isset($info[0]['uomdepartmentnumbers'][$index])) {
+							$return_department_num_array[] = $info[0]['uomdepartmentnumbers'][$index];
+							++$index;
+						}
+					}     
+				}
+        else {
+        	drupal_set_message(t('Unable to find username in the system'), 'error');
+        }       
+      }       
+    }
+    catch(Exception $e) {
+    	print_r($e);
+      drupal_set_message(t('Get personal info exception'), 'error');  
+    }
+	}
+
+	return $return_department_num_array;
+}
+
+
+function _intranet_allowed_department_nums() {
+	/*
+		100|Arts
+		110|Asia Institute
+		106|Culture and Communcation
+		131|Historical and Philosophical Studies
+		119|Languages and Linguistics
+		166|Social and Political Sciences
+		114|Unknown
+		151|Unknown
+	*/
+
+	return array(
+		'100',
+		'110',		
+		'106',
+		'131',
+		'119',
+		'166',
+		'114',
+		'151'
+	);
+}
+
+function _intranet_get_role_id_by_name($name)
+{
+  $role_id = "";
+
+  $query = db_select('role', 'r');
+  $query->fields('r', array('rid'));
+  $query->condition('name', $name);
+  $query->orderBy('rid');
+  $query->range(0, 1);
+
+  $result = $query->execute();
+  $record = $result->fetchAssoc();
+  $role_id = $record['rid'];
+
+  return $role_id;
+}
+
+function _intranet_create_users_roles_entry($uid, $role_id) {
+	db_insert('users_roles')
+    ->fields(
+        array(
+          'uid' => $uid,
+          'rid' => $role_id,
+        )
+    )
+  ->execute();
+}
+
+/*
+	My custom print_r
+*/
+function _intranet_my_print_r($entity) {
+	echo "<pre>";
+	print_r($entity);
+	echo "</pre>";
+	die;
 }
