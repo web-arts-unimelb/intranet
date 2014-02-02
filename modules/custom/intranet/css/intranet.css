@@ -72,3 +72,13 @@
 #views-exposed-form-university-staff-page .views-exposed-widget .form-item-attribute-name {
   display: none;
 }
+
+/* Start research cluster grant form */
+.researcher-cluster-fieldset span {
+	/* Simulate h3 */
+	font-size: 18px;
+	font-family: "Droid Sans",sans-serif;
+	color: #003366;
+	font-weight: bold;	
+}
+/* End research cluster grant form */
