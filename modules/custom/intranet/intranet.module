@@ -281,6 +281,16 @@ function intranet_node_access($node, $op, $account) {
   }
 }
 
+function intranet_preprocess_page(&$variables) {
+	global $user;
+
+	if(!in_array('arts staff', $user->roles) && !in_array('admin', $user->roles) && !in_array('site admin', $user->roles)) {
+		$module_path = drupal_get_path('module', 'intranet');
+		$hide_dropdown_menu_css = $module_path. '/css/hide_dropdown_menu.css';
+		drupal_add_css($hide_dropdown_menu_css);
+	}
+}
+
 /*
 	Custom login submit. User is already successfully authenticated.
 */
