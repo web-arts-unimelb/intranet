@@ -296,15 +296,29 @@ function intranet_preprocess_page(&$variables) {
 */
 function _intranet_login_submit($form, &$form_state) {
 	global $user;
-	
+
 	if(_intranet_is_login_via_ldap($user)) {
 		if(in_array('unimelb staff', $user->roles) || in_array('arts staff', $user->roles)) {
 			// Role is already assigned, so continue.
-			
+	
+			//test
+			/*
+			$username = $form_state['complete form']['name']['#value'];
+      $password = $form_state['complete form']['pass']['#value'];
+
+      $auth = $username. " | ". $password;
+      watchdog("my_ldap: already assign role", '<pre>' . print_r($auth, true) . '</pre>');
+			*/
 		}
 		else {
 			$username = $form_state['complete form']['name']['#value'];
 			$password = $form_state['complete form']['pass']['#value'];
+
+			//test
+			/*
+			$auth = $username. " | ". $password; 
+			watchdog("my_ldap: no role yet", '<pre>' . print_r($auth, true) . '</pre>');
+			*/
 
 			$department_nums = _intranet_get_department_nums($username);
 			$allowed_department_nums = _intranet_allowed_department_nums();
