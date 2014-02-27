@@ -64,6 +64,17 @@ function intranet_form_alter(&$form, &$form_state, $form_id) {
   else if ($form_id == 'views_exposed_form' && $form_state['view']->name == 'search_content') {
     $form['search_api_views_fulltext']['#default_value'] = filter_xss($_REQUEST['search_api_views_fulltext']);
   }
+	else if($form_id == 'webform_client_form_1989') {
+		// Research cluster form at production intranet 
+		global $user;
+
+		$email = $user->mail;
+		$display_name = _intranet_get_display_name($user->uid);
+
+		$form['submitted']['email']['#default_value'] = $email;
+		$form['submitted']['name']['#default_value'] = $display_name;
+	}
+
 }
 
 /**
@@ -274,6 +285,7 @@ function intranet_node_access($node, $op, $account) {
   );
 
   // If updating a node in the list and anon or not a site-admin, reject access.
+	$accepted_role = 'site admin';
   if ($op == 'update' && !empty($node->nid) &&  in_array($node->nid, $site_admin_node_list)) {
     if (empty($account->roles) || !in_array($accepted_role, $account->roles)) {
       return NODE_ACCESS_DENY;
@@ -464,6 +476,23 @@ function _intranet_create_users_roles_entry($uid, $role_id) {
         )
     )
   ->execute();
+}
+
+function _intranet_get_display_name($uid) {
+	$sql = " 
+		SELECT 
+			f.field_profile_display_name_value 
+		FROM 
+			{field_data_field_profile_display_name} f
+		WHERE
+			f.entity_id = :uid
+	";
+	
+	$result = db_query($sql, array(':uid' => $uid));
+	$record = $result->fetchObject();
+	$display_name = $record->field_profile_display_name_value;
+	
+	return $display_name;
 }
 
 /*
