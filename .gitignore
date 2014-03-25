@@ -1,8 +1,13 @@
 # Ignore configuration files that may contain sensitive information.
 drushrc.php
 settings.php
+local.settings.php
 
 # Ignore paths that contain user-generated content.
 database
 files
 private
+
+# Ignore files for migration from wordpress to drupal
+dups.csv
+wp_posts.sql
