@@ -156,6 +156,32 @@ function intranet_block_view($delta) {
   );
 }
 
+
+/**
+ * Implements hook_menu_local_tasks_alter() to unset unwanted tabs
+ */
+function intranet_menu_local_tasks_alter(&$data) {
+	global $user;
+
+	// If it contains unimelb staff, hide edit tab. 
+	// No care other roles.
+	if(
+			!(in_array('site admin', $user->roles) ||
+			in_array('admin', $user->roles) ||
+			in_array('editor', $user->roles) ||
+			in_array('arts staff', $user->roles)) 
+	) {
+  	foreach ($data['tabs'][0]['output'] as $key => $value) {
+    	if (trim($value['#link']['path']) === "user/%/edit") {
+      	unset($data['tabs'][0]['output'][$key]);
+				break;
+    	}
+  	}
+	}
+}
+
+
+
 /**
  * Helper to return a search form for SearchAPI.
  */
