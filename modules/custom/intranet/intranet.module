@@ -33,6 +33,10 @@ function intranet_form_alter(&$form, &$form_state, $form_id) {
   }
 
 	if ($form_id == 'user_login') {
+		//test
+		//$msg = "There is currently an error with the staff intranet that is preventing staff from logging in. The web team in the Arts Business Centre are working to resolve this. Apologies for the inconvenience.";
+		//drupal_set_message(t($msg));
+
 		// Ldap checking will be executed first, then the following submit handler
 		// If authentication is successfully, the submit handler will be called. Otherwise, it will not be called.
 		array_unshift($form['#submit'], '_intranet_login_submit');	
@@ -63,6 +67,11 @@ function intranet_form_alter(&$form, &$form_state, $form_id) {
   }
   else if ($form_id == 'views_exposed_form' && $form_state['view']->name == 'search_content') {
     $form['search_api_views_fulltext']['#default_value'] = filter_xss($_REQUEST['search_api_views_fulltext']);
+  }
+	else if($form_id == 'views_exposed_form' && isset($form['secondary'])) {
+		// Always collapsed requested by Sarah
+		// https://drupal.org/node/1983960	
+  	$form['secondary']['#collapsed'] = TRUE;  
   }
 	else if($form_id == 'webform_client_form_1989') {
 		// Research cluster form at production intranet 
