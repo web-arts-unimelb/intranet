@@ -83,6 +83,11 @@ function intranet_form_alter(&$form, &$form_state, $form_id) {
 		$form['submitted']['email']['#default_value'] = $email;
 		$form['submitted']['name']['#default_value'] = $display_name;
 	}
+	else if($form_id == 'webform_client_form_2010') {
+		// EOI and job interview staff workshops webform
+		drupal_add_css(drupal_get_path('module', 'intranet') . '/css/hide_staff_interview.css');	
+	}		
+
 
 }
 

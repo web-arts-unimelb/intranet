@@ -1,0 +1,10 @@
+input#edit-submitted-interview-sessions-1 {
+	display: none;
+}
+
+label[for=edit-submitted-interview-sessions-1] {
+	display: none;
+}
+
+
+
