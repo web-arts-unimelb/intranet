@@ -7,4 +7,37 @@ label[for=edit-submitted-interview-sessions-1] {
 }
 
 
+input#edit-submitted-interview-sessions-4 {
+  display: none;
+}
 
+label[for=edit-submitted-interview-sessions-4] {
+  display: none;
+}
+
+
+input#edit-submitted-eoi-application-sessions-1 {
+  display: none;
+}
+
+label[for=edit-submitted-eoi-application-sessions-1] {
+  display: none;
+}
+
+
+input#edit-submitted-eoi-application-sessions-2 {
+  display: none;
+}
+
+label[for=edit-submitted-eoi-application-sessions-2] {
+  display: none;
+}
+
+
+input#edit-submitted-eoi-application-sessions-3 {
+  display: none;
+}
+
+label[for=edit-submitted-eoi-application-sessions-3] {
+  display: none;
+}
