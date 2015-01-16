@@ -22,7 +22,7 @@ function intranet_drush_command() {
  * Command callback.
  */
 function drush_intranet_fix() {
-
+/*
   // Original nodes not in the current mapping.
   $result = db_query('SELECT nid FROM {node} WHERE nid NOT IN (SELECT destid1 FROM {migrate_map_staffintranetpage}) AND changed < :changed', array(':changed' => 1371560400));
   foreach ($result as $row) {
@@ -61,5 +61,15 @@ function drush_intranet_fix() {
     // DELETE THE NODE! KILL IT!
     node_delete($orig);
     drush_print(t('Deleted node @title', array('@title' => $node->title)));
+  }
+*/
+
+  $result = db_query('SELECT title,COUNT(title) as num FROM {node} GROUP BY title HAVING num > 1 ORDER BY title ASC');
+  foreach ($result as $row) {
+    $result2  = db_query('SELECT nid, title FROM {node} WHERE title = :title', array(':title' => $row->title));
+    foreach ($result2 as $node) {
+      $alias = db_query('SELECT alias FROM {url_alias} WHERE source = :source', array(':source' => 'node/' . $node->nid))->fetchField();
+      drush_print(t('"/node/@nid","/@alias","@title"', array('@nid' => $node->nid, '@alias' => $alias, '@title' => $node->title)));
+    }
   }
 }

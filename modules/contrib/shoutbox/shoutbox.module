@@ -752,7 +752,7 @@ function _shoutbox_sanitize_shout(&$shout) {
 }
 
 function _shoutbox_filter_form() {
-  /* $form = filter_form(variable_get('shoutbox_filter_format', 'FILTER_FORMAT_DEFAULT'), NULL, array('shoutbox_filter_format')); */
+  /* $form = filter_form(variable_get('shoutbox_filter_format', FILTER_FORMAT_DEFAULT), NULL, array('shoutbox_filter_format')); */
   // filter_admin_overview
   /* global $user; */
   /* $formats = filter_formats($user); */

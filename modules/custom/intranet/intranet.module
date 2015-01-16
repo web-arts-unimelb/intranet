@@ -205,7 +205,7 @@ function intranet_searchapi_form() {
     '#size' => 12,
     '#maxlength' => 128,
     '#attributes' => array(
-      'title' => t('Enter the terms you wish to search for.'),
+      'title' => t('Enter the terms you wish to search for'),
       'placeholder' => t('Search'),
     ),
   );
