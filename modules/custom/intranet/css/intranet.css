@@ -8,6 +8,58 @@ div.arts-dropdown div#arts-dropdown-site-search form input[name="search_block_fo
 }
 /* end search block */
 
+/* Start right hand side bar */
+/* More detail, apply as priority */
+.wrapper > .col-2.rightside{
+	padding: 40px 0 0 ;	
+}
+
+/* Start style for quick links on home page*/
+.sidebar-right #block-views-news-block-quick-links {
+	background: #d4e5f7;
+	padding-top: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+
+	-moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -khtml-border-radius: 5px;
+  border-radius: 5px;
+}
+
+.sidebar-right #block-views-news-block-quick-links h2 {
+	/* Somehow I need to reset here, due to padding-left: 5px above */
+	padding-left: 0;
+}
+
+/* End style for quick links on home page */
+
+/* Start style for announcements on home page */
+.sidebar-right #block-views-news-block-home-news {
+  background: #d4e5f7;
+	padding-top: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+
+	/* http://jonraasch.com/blog/css-rounded-corners-in-all-browsers */
+	-moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -khtml-border-radius: 5px;
+  border-radius: 5px;
+}
+
+.sidebar-right #block-views-news-block-home-news h2 {
+  /* Somehow I need to reset here, due to padding-left: 5px above */
+  padding-left: 0;
+}
+
+.sidebar-right #block-views-news-block-home-news .post-date {
+	font-size: 75%;
+	color: #43505f;
+}
+/* End style for announcements on home page */
+
+/* End right hand side bar */
 
 /* No border on the shoutbox form. */
 #shoutbox-add-form form fieldset {

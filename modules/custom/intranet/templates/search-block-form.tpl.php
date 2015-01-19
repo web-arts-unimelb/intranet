@@ -31,7 +31,7 @@
 ?>
 <div class="container-inline">
   <?php if (empty($variables['form']['#block']->subject)): ?>
-    <span class="float-left"><?php print t("Can't find what you're looking for"); ?></span>
+    <span class="search-label float-left"><?php print t("Can't find what you're looking for"); ?></span>
   <?php endif; ?>
   <?php print $search_form; ?>
 </div>
