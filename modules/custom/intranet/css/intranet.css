@@ -1,3 +1,14 @@
+.float-left {
+  float:left
+}
+
+/* Start search block */
+div.arts-dropdown div#arts-dropdown-site-search form input[name="search_block_form"] {
+	margin-left: 10px;
+}
+/* end search block */
+
+
 /* No border on the shoutbox form. */
 #shoutbox-add-form form fieldset {
   margin: 0;
