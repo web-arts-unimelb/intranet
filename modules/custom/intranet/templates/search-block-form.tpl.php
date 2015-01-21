@@ -31,7 +31,14 @@
 ?>
 <div class="container-inline">
   <?php if (empty($variables['form']['#block']->subject)): ?>
-    <span class="search-label float-left"><?php print t("Can't find what you're looking for"); ?></span>
+		<?php 
+			$node_search_url = "/search/node";
+		?>
+    <span class="search-label float-left">
+			<a href="<?php echo $node_search_url ?>">
+				<?php print t("Can't find what you're looking for?"); ?>
+			</a>
+		</span>
   <?php endif; ?>
   <?php print $search_form; ?>
 </div>

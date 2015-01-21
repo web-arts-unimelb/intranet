@@ -326,6 +326,7 @@ function intranet_node_access($node, $op, $account) {
   }
 
   // Several pages should be accessible by site-admins only.
+	/*
   $site_admin_node_list = array(
     '1657',
     '1654',
@@ -347,10 +348,24 @@ function intranet_node_access($node, $op, $account) {
     '1656',
     '1875'
   );
+	*/
+
+	// http://tracker.dev.arts.unimelb.edu.au/node/181#comment-800
+	// NOTE: disabled due to new melbourne model
+	$site_admin_node_list = array(
+    '1659',
+		'1402',
+		'1655',
+		'1869',
+		
+		'2053',
+		'1878',
+		'2048'	
+  );
 
   // If updating a node in the list and anon or not a site-admin, reject access.
 	$accepted_role = 'site admin';
-  if ($op == 'update' && !empty($node->nid) &&  in_array($node->nid, $site_admin_node_list)) {
+  if ($op == 'update' && !empty($node->nid) && in_array($node->nid, $site_admin_node_list)) {
     if (empty($account->roles) || !in_array($accepted_role, $account->roles)) {
       return NODE_ACCESS_DENY;
     }

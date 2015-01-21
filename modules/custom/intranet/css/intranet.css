@@ -3,6 +3,14 @@
 }
 
 /* Start search block */
+div.arts-dropdown .search-label {
+	font-size: 14px;
+	font-family: "Droid Sans";
+	font-weight: bold;
+	color: #214f80;
+	text-shadow: none; 
+}
+
 div.arts-dropdown div#arts-dropdown-site-search form input[name="search_block_form"] {
 	margin-left: 10px;
 }
