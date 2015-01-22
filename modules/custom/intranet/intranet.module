@@ -133,6 +133,7 @@ function intranet_preprocess_status_messages(&$vars) {
   }
 }
 
+
 /**
  * Implements hook_views_pre_render().
  */
@@ -206,6 +207,18 @@ function intranet_menu_local_tasks_alter(&$data) {
 				break;
     	}
   	}
+	}
+	
+	// Remove view, revisions tabs for non site admin, no node page	
+	if(!in_array('site admin', $user->roles)) {
+		foreach ($data['tabs'][0]['output'] as $key => $value) {
+      if (
+				trim($value['#link']['path']) === "node/%/view" ||
+				trim($value['#link']['path']) === "node/%/revisions"
+			) {
+        unset($data['tabs'][0]['output'][$key]);
+      }
+    }	
 	}
 }
 
