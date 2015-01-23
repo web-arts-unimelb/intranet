@@ -27,6 +27,7 @@ function intranet_menu() {
  * Implements hook_form_alter().
  */
 function intranet_form_alter(&$form, &$form_state, $form_id) {
+
   // The shoutbox form.
   if ($form_id == 'shoutbox_add_form') {
     $form['wrapper']['submit']['#value'] = t('Submit');
@@ -73,6 +74,17 @@ function intranet_form_alter(&$form, &$form_state, $form_id) {
 		// https://drupal.org/node/1983960	
   	$form['secondary']['#collapsed'] = TRUE;  
   }
+	else if($form_id == 'page_node_form') {
+		//http://stackoverflow.com/questions/18774263/drupal-7-hide-certain-form-fields-of-a-content-edit-form-depending-on-the-cont
+		// Hide some structure fields	
+		$form['field_shared_staff_services']['#access'] = FALSE;
+		$form['field_shared_type_of_information']['#access'] = FALSE;
+		$form['field_shared_unit_or_school']['#access'] = FALSE;
+		$form['field_shared_portfolio']['#access'] = FALSE;
+	}
+	else if($form_id == 'news_node_form') {
+		$form['field_shared_tags']['#access'] = FALSE;
+	}
 	else if($form_id == 'webform_client_form_1989') {
 		// Research cluster form at production intranet 
 		global $user;
@@ -193,6 +205,9 @@ function intranet_block_view($delta) {
 function intranet_menu_local_tasks_alter(&$data) {
 	global $user;
 
+	//test
+	//dsm($data);
+
 	// If it contains unimelb staff, hide edit tab. 
 	// No care other roles.
 	if(
@@ -209,12 +224,19 @@ function intranet_menu_local_tasks_alter(&$data) {
   	}
 	}
 	
-	// Remove view, revisions tabs for non site admin, no node page	
+	// - Remove view, revisions, search tabs for non site admin, no node page
+	// - Remove media tab in dashboard page
 	if(!in_array('site admin', $user->roles)) {
 		foreach ($data['tabs'][0]['output'] as $key => $value) {
+			$path = trim($value['#link']['path']);
+
       if (
-				trim($value['#link']['path']) === "node/%/view" ||
-				trim($value['#link']['path']) === "node/%/revisions"
+				$path === "node/%/view" ||
+				$path === "node/%/revisions" ||
+				$path === "search/node/%" ||
+				$path === "search/user/%" ||
+				$path === "admin/content/dashboard/my" ||
+				$path === "admin/content/dashboard/media"
 			) {
         unset($data['tabs'][0]['output'][$key]);
       }
