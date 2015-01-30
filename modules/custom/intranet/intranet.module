@@ -8,6 +8,7 @@
  */
 function intranet_init() {
   drupal_add_css(drupal_get_path('module', 'intranet') . '/css/intranet.css');
+	drupal_add_js(drupal_get_path('module', 'intranet') . '/js/intranet.js');
 }
 
 /**
