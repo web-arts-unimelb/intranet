@@ -246,6 +246,19 @@ function intranet_menu_local_tasks_alter(&$data) {
 }
 
 
+// hook_admin_menu_output_alter
+function intranet_admin_menu_output_alter(&$content) {
+	global $user;
+
+	if(!(in_array('site admin', $user->roles))) {
+		$content['account']['account']['#href'] = NULL;
+	}
+	else {
+
+	}
+}
+
+
 
 /**
  * Helper to return a search form for SearchAPI.
