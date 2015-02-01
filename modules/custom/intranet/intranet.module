@@ -231,11 +231,14 @@ function intranet_menu_local_tasks_alter(&$data) {
 		foreach ($data['tabs'][0]['output'] as $key => $value) {
 			$path = trim($value['#link']['path']);
 
+			// Interesting, there are paths for 'search/user/%'
+			// 'search/user'
       if (
 				$path === "node/%/view" ||
 				$path === "node/%/revisions" ||
 				$path === "search/node/%" ||
 				$path === "search/user/%" ||
+				$path === "search/user" ||
 				$path === "admin/content/dashboard/my" ||
 				$path === "admin/content/dashboard/media"
 			) {
