@@ -454,14 +454,14 @@ function _intranet_login_submit($form, &$form_state) {
 	if(_intranet_is_login_via_ldap($user)) {
 		if(in_array('arts staff', $user->roles)) {
 			// NOTE
-			_intranet_login_cap(TRUE, $form_state);
+			_intranet_login_cap(FALSE, $form_state);
 		}
 
 		else if(in_array('unimelb staff', $user->roles)) {
 			// Potential new arts staff from other departments
 
 			// NOTE
-			_intranet_login_cap(TRUE, $form_state);
+			_intranet_login_cap(FALSE, $form_state);
 
 			// NOTE: duplicated code as below, need to refactor it.
 			$username = $form_state['complete form']['name']['#value'];
