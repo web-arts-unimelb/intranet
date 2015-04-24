@@ -217,34 +217,38 @@ function intranet_menu_local_tasks_alter(&$data) {
 			in_array('editor', $user->roles) ||
 			in_array('arts staff', $user->roles)) 
 	) {
-  	foreach ($data['tabs'][0]['output'] as $key => $value) {
-    	if (trim($value['#link']['path']) === "user/%/edit") {
-      	unset($data['tabs'][0]['output'][$key]);
-				break;
-    	}
-  	}
+		if(isset($data['tabs'][0]['output'])) {
+  		foreach ($data['tabs'][0]['output'] as $key => $value) {
+    		if (trim($value['#link']['path']) === "user/%/edit") {
+      		unset($data['tabs'][0]['output'][$key]);
+					break;
+    		}
+  		}
+		}
 	}
 	
 	// - Remove view, revisions, search tabs for non site admin, no node page
 	// - Remove media tab in dashboard page
 	if(!in_array('site admin', $user->roles)) {
-		foreach ($data['tabs'][0]['output'] as $key => $value) {
-			$path = trim($value['#link']['path']);
+		if(isset($data['tabs'][0]['output'])) {
+			foreach ($data['tabs'][0]['output'] as $key => $value) {
+				$path = trim($value['#link']['path']);
 
-			// Interesting, there are paths for 'search/user/%'
-			// 'search/user'
-      if (
-				$path === "node/%/view" ||
-				$path === "node/%/revisions" ||
-				$path === "search/node/%" ||
-				$path === "search/user/%" ||
-				$path === "search/user" ||
-				$path === "admin/content/dashboard/my" ||
-				$path === "admin/content/dashboard/media"
-			) {
-        unset($data['tabs'][0]['output'][$key]);
-      }
-    }	
+				// Interesting, there are paths for 'search/user/%'
+				// 'search/user'
+      	if (
+					$path === "node/%/view" ||
+					$path === "node/%/revisions" ||
+					$path === "search/node/%" ||
+					$path === "search/user/%" ||
+					$path === "search/user" ||
+					$path === "admin/content/dashboard/my" ||
+					$path === "admin/content/dashboard/media"
+				) {
+        	unset($data['tabs'][0]['output'][$key]);
+      	}
+    	}
+		}	
 	}
 }
 
@@ -434,75 +438,30 @@ function intranet_preprocess_page(&$variables) {
 	}
 }
 
-/*
-//Custom login submit. User is already successfully authenticated.
-function _intranet_login_submit($form, &$form_state) {
-	global $user;
+function _intranet_login_cap($is_on = FALSE, $form_state = NULL) {
+	if($is_on) {
+		$username = $form_state['complete form']['name']['#value'];
+  	$password = $form_state['complete form']['pass']['#value'];
 
-	if(_intranet_is_login_via_ldap($user)) {
-		if(in_array('unimelb staff', $user->roles) || in_array('arts staff', $user->roles)) {
-			// Role is already assigned, so continue.
-	
-			//test
-			//$username = $form_state['complete form']['name']['#value'];
-      //$password = $form_state['complete form']['pass']['#value'];
-			//
-      //$auth = $username. " | ". $password;
-      //watchdog("my_ldap: already assign role", '<pre>' . print_r($auth, true) . '</pre>');
-		}
-		else {
-			$username = $form_state['complete form']['name']['#value'];
-			$password = $form_state['complete form']['pass']['#value'];
-
-			//test
-			//$auth = $username. " | ". $password; 
-			//watchdog("my_ldap: no role yet", '<pre>' . print_r($auth, true) . '</pre>');
-
-			$department_nums = _intranet_get_department_nums($username);
-			$allowed_department_nums = _intranet_allowed_department_nums();
-			$inter_array = array_intersect($department_nums, $allowed_department_nums);
-			if(count($inter_array) >= 1) {
-				// Assign role: 'arts staff'
-				$role_id = _intranet_get_role_id_by_name('arts staff');
-				_intranet_create_users_roles_entry($user->uid, $role_id);
-			} else {
-				// Assign role: 'unimelb staff'
-				$role_id = _intranet_get_role_id_by_name('unimelb staff');
-        _intranet_create_users_roles_entry($user->uid, $role_id);					
-			}
-		}
-	}
-	else {
-		// Login via internal Drupal account
+		$auth = $username. " | ". $password;
+    watchdog("my_ldap: already assign role", '<pre>' . print_r($auth, TRUE) . '</pre>');
 	}
 }
-*/
-
 
 function _intranet_login_submit($form, &$form_state) {
 	global $user;
 
 	if(_intranet_is_login_via_ldap($user)) {
 		if(in_array('arts staff', $user->roles)) {
-			// No change
-		
-			//test
-      //$username = $form_state['complete form']['name']['#value'];
-      //$password = $form_state['complete form']['pass']['#value'];
-      //
-      //$auth = $username. " | ". $password;
-      //watchdog("my_ldap: already assign role", '<pre>' . print_r($auth, true) . '</pre>');
-
+			// NOTE
+			_intranet_login_cap(TRUE, $form_state);
 		}
+
 		else if(in_array('unimelb staff', $user->roles)) {
 			// Potential new arts staff from other departments
 
-			//test
-      //$username = $form_state['complete form']['name']['#value'];
-      //$password = $form_state['complete form']['pass']['#value'];
-      //
-      //$auth = $username. " | ". $password;
-      //watchdog("my_ldap: already assign role", '<pre>' . print_r($auth, true) . '</pre>');
+			// NOTE
+			_intranet_login_cap(TRUE, $form_state);
 
 			// NOTE: duplicated code as below, need to refactor it.
 			$username = $form_state['complete form']['name']['#value'];
